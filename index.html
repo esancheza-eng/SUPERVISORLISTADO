@@ -501,8 +501,16 @@ function doLoad(){
       data.forEach(row => {
         const fv = row['Fecha Vencimiento Final (Más Antigua)'];
         if(typeof fv === 'number'){
-          const d = new Date(Math.round((fv-25569)*86400*1000));
-          row['Fecha Vencimiento Final (Más Antigua)'] = d.toLocaleDateString('es-EC');
+          // ── Corrección zona horaria ──────────────────────────────────────
+          // Excel almacena días desde 1900-01-00. Convertimos a ms UTC,
+          // luego extraemos año/mes/día en UTC puro para evitar que
+          // UTC-5 (Ecuador) retroceda la fecha 1 día.
+          const totalMs = Math.round((fv - 25569) * 86400 * 1000);
+          const utc = new Date(totalMs);
+          const dd  = String(utc.getUTCDate()).padStart(2,'0');
+          const mm  = String(utc.getUTCMonth()+1).padStart(2,'0');
+          const yy  = utc.getUTCFullYear();
+          row['Fecha Vencimiento Final (Más Antigua)'] = `${dd}/${mm}/${yy}`;
         }
         if(!row['Dirección Principal'])  row['Dirección Principal'] = '';
         if(!row['Zona Cliente Final'])   row['Zona Cliente Final']  = '';
