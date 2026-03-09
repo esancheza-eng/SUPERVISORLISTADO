@@ -361,7 +361,7 @@
               <th>Dirección</th><th>Teléfono</th>
               <th onclick="srt('Calificación Cliente Mensual')">Cal. ↕</th>
               <th onclick="srt('Fecha Vencimiento Final (Más Antigua)')">Vence ↕</th>
-              <th onclick="srt('CAIDAS DIA')">Caídas ↕</th>
+              <th onclick="srt('DIA CAIDA')">Caídas ↕</th>
               <th onclick="srt('SALDO CUOTA')">Saldo ↕</th>
               <th onclick="srt('CXC TOTAL')">CXC ↕</th>
               <th onclick="srt('Categoría del Cliente')">Cat. ↕</th>
@@ -417,7 +417,7 @@ const LS_KEY      = 'elhycars_supervisor_data';
 /* ─────────────────────────────────────────────
    ESTADO DE LA APP
 ───────────────────────────────────────────── */
-let ALL=[], FD=[], CK='CAIDAS DIA', sF=null, sA=true, pCur=1, PS=50, pendingFile=null;
+let ALL=[], FD=[], CK='DIA CAIDA', sF=null, sA=true, pCur=1, PS=50, pendingFile=null;
 const activeCaidas = new Set();
 
 /* ─────────────────────────────────────────────
@@ -647,9 +647,14 @@ function setTab(t){
 }
 
 function detectCK(row){
+  // Acepta: DIA CAIDA, CAIDAS DIA, DIA CAÍDA, CAÍDA DIA y variantes con tildes/espacios
+  const normalize = s => s
+    .replace(/[ÍÁÉÓÚíáéóú]/g, c=>({'Í':'I','í':'i','Á':'A','á':'a','É':'E','é':'e','Ó':'O','ó':'o','Ú':'U','ú':'u'}[c]||c))
+    .toUpperCase().replace(/\s+/g,' ').trim();
+  const VALID = ['CAIDAS DIA','DIA CAIDA','CAIDA DIA','DIA CAIDAS'];
   const k = Object.keys(row);
-  const f = k.find(k=>k.replace(/[ÍIÁAÉEÓOÚU]/gi,c=>({'Í':'I','í':'i','Á':'A','á':'a','É':'E','é':'e','Ó':'O','ó':'o','Ú':'U','ú':'u'}[c]||c)).toUpperCase().replace(/\s+/g,' ').trim()==='CAIDAS DIA');
-  return f||'CAIDAS DIA';
+  const f = k.find(k => VALID.includes(normalize(k)));
+  return f || 'DIA CAIDA';
 }
 
 function getCobs(){
@@ -959,7 +964,7 @@ function expAll(){
     if(!raw) return;
     const p = JSON.parse(raw);
     if(!p?.data?.length) return;
-    ALL = p.data; CK = p.ck||'CAIDAS DIA';
+    ALL = p.data; CK = p.ck||'DIA CAIDA';
     const ts = p.ts ? new Date(p.ts) : new Date();
     const dc = document.getElementById('dchip');
     dc.textContent = `${String(ts.getDate()).padStart(2,'0')}/${String(ts.getMonth()+1).padStart(2,'0')}/${ts.getFullYear()} ${String(ts.getHours()).padStart(2,'0')}:${String(ts.getMinutes()).padStart(2,'0')}`;
