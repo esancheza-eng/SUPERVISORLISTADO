@@ -4,9 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Zona Milagro — Supervisor CSanchez</title>
-<!-- SheetJS -->
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
-<!-- Firebase v10 (ESM via CDN compat) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <style>
@@ -15,8 +13,6 @@
   *{box-sizing:border-box;margin:0;padding:0;}
   body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;min-height:100vh;overflow-x:hidden;}
   body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(245,158,11,.006) 2px,rgba(245,158,11,.006) 4px);pointer-events:none;z-index:9999;}
-
-  /* ── MODAL ── */
   .ov{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(10px);z-index:600;display:none;align-items:center;justify-content:center;}
   .ov.open{display:flex;}
   .modal{background:var(--surface);border:1px solid var(--border2);border-radius:22px;padding:46px 50px;max-width:520px;width:93%;text-align:center;position:relative;box-shadow:0 40px 100px rgba(0,0,0,.8);animation:popIn .35s cubic-bezier(.34,1.56,.64,1);}
@@ -40,8 +36,6 @@
   .btn-ok:disabled{opacity:.3;cursor:default;transform:none;}
   .btn-cx{background:transparent;border:1px solid var(--border);color:var(--muted2);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.92rem;letter-spacing:.1em;text-transform:uppercase;padding:12px 26px;border-radius:9px;cursor:pointer;transition:all .2s;}
   .btn-cx:hover{border-color:var(--muted2);color:var(--text);}
-
-  /* ── HEADER ── */
   .hdr{background:linear-gradient(135deg,#060710 0%,#0b0e1e 50%,#060710 100%);border-bottom:2px solid rgba(245,158,11,.2);padding:0 26px;display:flex;align-items:center;justify-content:space-between;height:64px;position:sticky;top:0;z-index:100;box-shadow:0 4px 40px rgba(0,0,0,.6);gap:14px;}
   .hl{display:flex;align-items:center;gap:14px;flex-shrink:0;}
   .logo{width:36px;height:36px;background:linear-gradient(135deg,var(--accent),#d97706);border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.72rem;color:#000;flex-shrink:0;}
@@ -53,8 +47,6 @@
   .spill span{font-family:'Rajdhani',sans-serif;font-size:.74rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);}
   .hr{display:flex;align-items:center;gap:8px;flex-shrink:0;}
   .dchip{font-family:'Space Mono',monospace;font-size:.68rem;background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.15);padding:5px 12px;border-radius:5px;color:var(--accent);white-space:nowrap;}
-
-  /* ── ESTADO FIREBASE ── */
   .fb-status{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:7px;border:1px solid var(--border);font-family:'Rajdhani',sans-serif;font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;transition:all .3s;}
   .fb-status.ok{background:rgba(0,255,136,.07);border-color:rgba(0,255,136,.25);color:var(--green);}
   .fb-status.err{background:rgba(255,61,90,.07);border-color:rgba(255,61,90,.25);color:var(--red);}
@@ -63,14 +55,11 @@
   .fb-status.ok .fb-dot{background:var(--green);box-shadow:0 0 6px var(--green);animation:blink 2s infinite;}
   .fb-status.err .fb-dot{background:var(--red);}
   .fb-status.loading .fb-dot{background:var(--accent);animation:blink .8s infinite;}
-
   .btn-upload{background:linear-gradient(135deg,var(--accent),#d97706);color:#000;padding:8px 20px;border-radius:8px;border:none;cursor:pointer;font-family:'Rajdhani',sans-serif;font-size:.84rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;transition:all .2s;display:flex;align-items:center;gap:7px;white-space:nowrap;box-shadow:0 3px 16px rgba(245,158,11,.28);}
   .btn-upload:hover{transform:translateY(-1px);}
   .btn-expall{background:linear-gradient(135deg,var(--green),#00cc70);color:#000;border:none;font-family:'Rajdhani',sans-serif;font-size:.84rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:8px 18px;border-radius:8px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:7px;white-space:nowrap;}
   .btn-expall:hover{transform:translateY(-1px);}
   .btn-expall:disabled{opacity:.3;cursor:default;transform:none!important;}
-
-  /* ── SYNC BANNER ── */
   .sync{display:none;border-radius:10px;padding:11px 18px;margin:16px 26px 0;align-items:center;gap:12px;}
   .sync.on{display:flex;}
   .sync.local{background:linear-gradient(135deg,rgba(0,229,255,.06),rgba(0,229,255,.02));border:1px solid rgba(0,229,255,.2);}
@@ -79,21 +68,15 @@
   .sync.local strong{color:var(--cyan);}
   .sync.firebase strong{color:#ff8800;}
   .sync small{font-family:'Space Mono',monospace;font-size:.65rem;color:var(--muted2);}
-
-  /* ── PROGRESS BAR UPLOAD ── */
   .prog-wrap{display:none;margin:0 26px 12px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 18px;}
   .prog-wrap.on{display:block;}
   .prog-lbl{font-family:'Rajdhani',sans-serif;font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:8px;display:flex;justify-content:space-between;}
   .prog-bar{height:4px;background:var(--border);border-radius:2px;overflow:hidden;}
   .prog-fill{height:100%;background:linear-gradient(90deg,var(--accent),#ff8800);border-radius:2px;transition:width .3s ease;width:0%;}
-
-  /* ── MAIN ── */
   .main{padding:20px 26px;}
   .tabs{display:flex;gap:4px;margin-bottom:20px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:5px;}
   .tab{flex:1;padding:9px 16px;border-radius:8px;border:none;background:transparent;color:var(--muted2);font-family:'Rajdhani',sans-serif;font-size:.82rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:all .2s;text-align:center;}
   .tab.active{background:linear-gradient(135deg,rgba(245,158,11,.18),rgba(245,158,11,.07));color:var(--accent);border:1px solid rgba(245,158,11,.25);}
-
-  /* ── KPIs ── */
   .kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:20px;}
   .kpi{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px 20px;position:relative;overflow:hidden;transition:all .2s;}
   .kpi:hover{transform:translateY(-2px);}
@@ -116,14 +99,10 @@
   .kpi.em .kpi-v{color:var(--green);}
   .kpi.ro .kpi-v{color:var(--red);}
   .kpi-s{font-family:'Space Mono',monospace;font-size:.6rem;color:var(--muted);margin-top:5px;}
-
-  /* ── EMPTY ── */
   .empty{text-align:center;padding:60px 20px;}
   .empty-i{font-size:3.5rem;opacity:.3;margin-bottom:16px;}
   .empty h3{font-family:'Rajdhani',sans-serif;font-size:1rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted2);margin-bottom:10px;}
   .empty p{font-size:.83rem;color:var(--muted);line-height:1.7;}
-
-  /* ── FILTERS ── */
   .fbar{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px 22px;margin-bottom:20px;}
   .ftit{font-family:'Rajdhani',sans-serif;font-size:.7rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
   .ftit::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(245,158,11,.2),transparent);}
@@ -139,24 +118,12 @@
   .cwrap{display:flex;gap:6px;flex-wrap:nowrap;overflow-x:auto;}
   .cwrap::-webkit-scrollbar{height:3px;}
   .cwrap::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
-  /* Botones caídas horizontales */
-  .btn-c{
-    display:inline-flex;flex-direction:column;align-items:center;justify-content:center;
-    min-width:52px;padding:6px 10px;border-radius:10px;
-    border:1px solid var(--border);background:var(--surface2);
-    color:var(--muted2);cursor:pointer;
-    font-family:'Space Mono',monospace;font-size:.78rem;font-weight:700;
-    transition:all .2s;flex-shrink:0;gap:2px;position:relative;
-  }
+  .btn-c{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;min-width:52px;padding:6px 10px;border-radius:10px;border:1px solid var(--border);background:var(--surface2);color:var(--muted2);cursor:pointer;font-family:'Space Mono',monospace;font-size:.78rem;font-weight:700;transition:all .2s;flex-shrink:0;gap:2px;position:relative;}
   .btn-c .bc-num{font-size:.78rem;font-weight:700;line-height:1;}
   .btn-c .bc-cnt{font-family:'Rajdhani',sans-serif;font-size:.55rem;font-weight:600;letter-spacing:.04em;color:var(--muted);line-height:1;}
   .btn-c:hover{border-color:rgba(255,61,90,.4);color:var(--red);background:rgba(255,61,90,.06);}
-  .btn-c.on{
-    background:rgba(255,61,90,.16);border-color:var(--red);color:var(--red);
-    box-shadow:0 0 12px rgba(255,61,90,.2);
-  }
+  .btn-c.on{background:rgba(255,61,90,.16);border-color:var(--red);color:var(--red);box-shadow:0 0 12px rgba(255,61,90,.2);}
   .btn-c.on .bc-cnt{color:rgba(255,61,90,.6);}
-  /* colores por nivel de caída */
   .btn-c[data-level="0"]{border-color:rgba(0,255,136,.2);color:var(--green);}
   .btn-c[data-level="0"]:hover,.btn-c[data-level="0"].on{background:rgba(0,255,136,.1);border-color:var(--green);color:var(--green);box-shadow:0 0 10px rgba(0,255,136,.2);}
   .btn-c[data-level="1"]{border-color:rgba(255,184,0,.2);color:#ffb800;}
@@ -165,8 +132,6 @@
   .btn-c[data-level="2"]:hover,.btn-c[data-level="2"].on{background:rgba(255,107,53,.1);border-color:#ff6b35;color:#ff6b35;box-shadow:0 0 10px rgba(255,107,53,.2);}
   .btn-c[data-level="high"]{border-color:rgba(255,61,90,.25);color:var(--red);}
   .btn-c[data-level="high"]:hover,.btn-c[data-level="high"].on{background:rgba(255,61,90,.14);border-color:var(--red);color:var(--red);box-shadow:0 0 10px rgba(255,61,90,.25);}
-
-  /* ── LAYOUT ── */
   .lay{display:grid;grid-template-columns:1fr 330px;gap:18px;}
   .twrap{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;}
   .thead{padding:13px 20px;border-bottom:1px solid var(--border);background:var(--hbg);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
@@ -197,8 +162,6 @@
   .pgr button:disabled{opacity:.3;cursor:default;}
   .pgi{font-family:'Space Mono',monospace;font-size:.68rem;color:var(--muted);margin-left:auto;}
   .nores{text-align:center;padding:44px;color:var(--muted);font-family:'Space Mono',monospace;font-size:.82rem;}
-
-  /* ── TOP 10 ── */
   .t10{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;}
   .t10h{padding:13px 17px;border-bottom:1px solid var(--border);background:var(--hbg);display:flex;justify-content:space-between;align-items:center;}
   .t10h h3{font-family:'Rajdhani',sans-serif;font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;}
@@ -206,8 +169,6 @@
   .t10b{padding:10px;overflow-y:auto;flex:1;}
   .t10b::-webkit-scrollbar{width:4px;}
   .t10b::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
-
-  /* ── COBRADOR CARDS ── */
   .cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px;}
   .ccard{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:all .2s;}
   .ccard:hover{border-color:rgba(245,158,11,.28);transform:translateY(-2px);}
@@ -228,14 +189,11 @@
   .brtr{flex:1;height:5px;background:var(--border);border-radius:3px;overflow:hidden;}
   .brfi{height:100%;border-radius:3px;transition:width .6s ease;}
   .brn{font-family:'Space Mono',monospace;font-size:.6rem;color:var(--muted);min-width:22px;text-align:right;}
-
-  /* ── TOAST ── */
   .tst{position:fixed;bottom:22px;right:22px;padding:13px 20px;border-radius:10px;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.9rem;letter-spacing:.08em;z-index:9998;transform:translateY(80px);opacity:0;transition:all .35s cubic-bezier(.34,1.56,.64,1);display:flex;align-items:center;gap:10px;box-shadow:0 8px 32px rgba(0,0,0,.55);}
   .tst.on{transform:translateY(0);opacity:1;}
   .tst.ok{background:linear-gradient(135deg,#1a1200,#2c2000);border:1px solid rgba(245,158,11,.35);color:var(--accent);}
   .tst.err{background:linear-gradient(135deg,#2a0a0a,#3a0d0d);border:1px solid rgba(255,61,90,.3);color:var(--red);}
   .tst.fire{background:linear-gradient(135deg,#1a0e00,#2c1800);border:1px solid rgba(255,136,0,.35);color:#ff8800;}
-
   @media(max-width:920px){.lay{grid-template-columns:1fr;}}
   @media(max-width:600px){
     .hdr{padding:0 10px;height:56px;}.hdr h1{font-size:.9rem;}.dchip{display:none!important;}
@@ -281,7 +239,6 @@
   </div>
   <div class="hr">
     <span class="dchip" id="dchip" style="display:none"></span>
-    <!-- Indicador estado Firebase -->
     <div class="fb-status loading" id="fbStatus">
       <div class="fb-dot"></div>
       <span>Firebase</span>
@@ -310,7 +267,6 @@
     <button class="tab" id="tc" onclick="setTab('c')">👥 Por Cobrador</button>
   </div>
 
-  <!-- KPIs -->
   <div class="kpi-row">
     <div class="kpi go"><div class="kpi-l">Total Clientes</div><div class="kpi-v" id="kt">—</div><div class="kpi-s" id="ks">Sin datos</div></div>
     <div class="kpi vi"><div class="kpi-l">CXC Cartera Total</div><div class="kpi-v" id="kc">—</div><div class="kpi-s">Global</div></div>
@@ -325,7 +281,6 @@
     <p>Usa <strong style="color:var(--accent)">📂 Cargar Archivo</strong> para publicar el listado maestro en Firebase.<br>Los cobradores verán sus datos actualizados automáticamente en tiempo real.</p>
   </div>
 
-  <!-- GENERAL -->
   <div id="pg" style="display:none">
     <div class="fbar">
       <div class="ftit">⚡ Filtros Globales</div>
@@ -336,13 +291,11 @@
         <div class="fg"><label>📊 Categoría</label><select id="fcat" onchange="applyF()"><option value="">— Todas —</option></select></div>
         <div class="fg" style="align-self:flex-end"><button class="btn-ghost" onclick="clearF()">✕ Limpiar</button></div>
       </div>
-      <!-- CAÍDAS POR DÍA - barra horizontal -->
       <div class="crow" style="flex-wrap:wrap;gap:10px;">
         <div class="clbl">🔴 Caídas / Día</div>
         <div id="cwrap" style="display:flex;flex-wrap:nowrap;overflow-x:auto;gap:6px;flex:1;padding-bottom:2px;scrollbar-width:thin;"></div>
         <button class="btn-ghost" id="btnClearCaidas" onclick="clearCaidas()" style="display:none;padding:5px 12px;font-size:.72rem;">✕ Limpiar</button>
       </div>
-      <!-- RESUMEN VISUAL caídas -->
       <div id="caidasBar" style="display:none;margin-top:10px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;">
         <div style="font-family:'Rajdhani',sans-serif;font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted2);margin-bottom:8px;">Distribución de Caídas</div>
         <div id="caidasBarInner" style="display:flex;gap:4px;align-items:flex-end;height:40px;"></div>
@@ -361,7 +314,7 @@
               <th>Dirección</th><th>Teléfono</th>
               <th onclick="srt('Calificación Cliente Mensual')">Cal. ↕</th>
               <th onclick="srt('Fecha Vencimiento Final (Más Antigua)')">Vence ↕</th>
-              <th onclick="srt('DIA CAIDA')">Caídas ↕</th>
+              <th id="thCaida">Caídas ↕</th>
               <th onclick="srt('SALDO CUOTA')">Saldo ↕</th>
               <th onclick="srt('CXC TOTAL')">CXC ↕</th>
               <th onclick="srt('Categoría del Cliente')">Cat. ↕</th>
@@ -384,395 +337,287 @@
     </div>
   </div>
 
-  <!-- COBRADORES -->
   <div id="pc" style="display:none"><div class="cgrid" id="cgrid"></div></div>
 </div>
 
-<!-- ══════════════════════════════════════════════
-     FIREBASE + APP LOGIC
-══════════════════════════════════════════════ -->
 <script>
-/* ─────────────────────────────────────────────
-   ⚙️  CONFIGURACIÓN FIREBASE
-   👉  REEMPLAZA ESTOS VALORES CON LOS TUYOS
-      (Consola Firebase → Configuración del proyecto)
-───────────────────────────────────────────── */
+/* ══════════════════════════════════════════════
+   ⚙️  FIREBASE CONFIG — valores reales del proyecto
+══════════════════════════════════════════════ */
 const firebaseConfig = {
-  apiKey:            "TU_API_KEY",
+  apiKey:            "AIzaSyD0uawPdVg-Z0OjrCF_j-1VnX91F5oBWdk",
   authDomain:        "listado-cobradores.firebaseapp.com",
   databaseURL:       "https://listado-cobradores-default-rtdb.firebaseio.com",
   projectId:         "listado-cobradores",
-  storageBucket:     "listado-cobradores.appspot.com",
-  messagingSenderId: "XXXXXXXX",
-  appId:             "XXXXXXXX"
+  storageBucket:     "listado-cobradores.firebasestorage.app",  /* ← corregido */
+  messagingSenderId: "163938271747",                             /* ← corregido */
+  appId:             "1:163938271747:web:b1fb3434c80698868e0436" /* ← corregido */
 };
 
-/* ─── Inicializar Firebase ─── */
 firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-const CARTERA_REF = db.ref("cartera");       // nodo principal
-const META_REF    = db.ref("cartera_meta");  // metadatos (timestamp, cobrador count, etc.)
-const LS_KEY      = 'elhycars_supervisor_data';
+const db          = firebase.database();
+const CARTERA_REF = db.ref('cartera');
+const META_REF    = db.ref('cartera_meta');
+const LS_KEY      = 'zm_csanchez_supervisor_data';
 
-/* ─────────────────────────────────────────────
-   ESTADO DE LA APP
-───────────────────────────────────────────── */
 let ALL=[], FD=[], CK='DIA CAIDA', sF=null, sA=true, pCur=1, PS=50, pendingFile=null;
 const activeCaidas = new Set();
 
-/* ─────────────────────────────────────────────
-   INDICADOR DE ESTADO FIREBASE
-───────────────────────────────────────────── */
-function setFbStatus(state, label){
-  const el = document.getElementById('fbStatus');
-  el.className = 'fb-status ' + state;
-  el.innerHTML = `<div class="fb-dot"></div><span>${label}</span>`;
+/* ── Firebase status ── */
+function setFbStatus(state,label){
+  const el=document.getElementById('fbStatus');
+  el.className='fb-status '+state;
+  el.innerHTML=`<div class="fb-dot"></div><span>${label}</span>`;
 }
-
-// Verificar conexión Firebase en tiempo real
-db.ref('.info/connected').on('value', snap => {
-  if(snap.val() === true){
-    setFbStatus('ok', 'Firebase ●');
-  } else {
-    setFbStatus('err', 'Sin conexión');
-  }
+db.ref('.info/connected').on('value',snap=>{
+  setFbStatus(snap.val()?'ok':'err', snap.val()?'Firebase ●':'Sin conexión');
 });
 
-/* ─────────────────────────────────────────────
-   TOAST
-───────────────────────────────────────────── */
-function toast(m, t='ok'){
-  const el = document.getElementById('tst');
-  el.innerHTML = `<span>${t==='ok'?'✔':t==='fire'?'🔥':'✖'}</span><span>${m}</span>`;
-  el.className = `tst ${t} on`;
+/* ── Toast ── */
+function toast(m,t='ok'){
+  const el=document.getElementById('tst');
+  el.innerHTML=`<span>${t==='ok'?'✔':t==='fire'?'🔥':'✖'}</span><span>${m}</span>`;
+  el.className=`tst ${t} on`;
   clearTimeout(el._t);
-  el._t = setTimeout(()=>{ el.className=`tst ${t}`; }, 4000);
+  el._t=setTimeout(()=>{el.className=`tst ${t}`;},4000);
 }
 
-/* ─────────────────────────────────────────────
-   MODAL
-───────────────────────────────────────────── */
+/* ── Modal ── */
 function openM(){
-  pendingFile = null;
-  document.getElementById('finfo').innerHTML = 'Ningún archivo seleccionado';
-  document.getElementById('btnok').disabled = true;
+  pendingFile=null;
+  document.getElementById('finfo').innerHTML='Ningún archivo seleccionado';
+  document.getElementById('btnok').disabled=true;
   document.getElementById('ov').classList.add('open');
 }
 function closeM(){
   document.getElementById('ov').classList.remove('open');
-  pendingFile = null;
+  pendingFile=null;
 }
-document.getElementById('ov').addEventListener('click', e=>{ if(e.target.id==='ov') closeM(); });
-document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeM(); });
+document.getElementById('ov').addEventListener('click',e=>{ if(e.target.id==='ov') closeM(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeM(); });
 
 function onPick(inp){
-  const f = inp.files[0];
-  if(!f) return;
-  pendingFile = f;
-  document.getElementById('finfo').innerHTML = `📄 <span>${f.name}</span> · ${(f.size/1024).toFixed(1)} KB`;
-  document.getElementById('btnok').disabled = false;
+  const f=inp.files[0]; if(!f) return;
+  pendingFile=f;
+  document.getElementById('finfo').innerHTML=`📄 <span>${f.name}</span> · ${(f.size/1024).toFixed(1)} KB`;
+  document.getElementById('btnok').disabled=false;
 }
 function onDrop(e){
   e.preventDefault();
   document.getElementById('dz').classList.remove('over');
-  const f = e.dataTransfer.files[0];
-  if(!f||!f.name.match(/\.(xlsx|xls)$/i)){ toast('Solo .xlsx o .xls','err'); return; }
-  pendingFile = f;
-  document.getElementById('finfo').innerHTML = `📄 <span>${f.name}</span> · ${(f.size/1024).toFixed(1)} KB`;
-  document.getElementById('btnok').disabled = false;
+  const f=e.dataTransfer.files[0];
+  if(!f||!f.name.match(/\.(xlsx|xls)$/i)){toast('Solo .xlsx o .xls','err');return;}
+  pendingFile=f;
+  document.getElementById('finfo').innerHTML=`📄 <span>${f.name}</span> · ${(f.size/1024).toFixed(1)} KB`;
+  document.getElementById('btnok').disabled=false;
 }
 
-/* ─────────────────────────────────────────────
-   CARGA Y PUBLICACIÓN EN FIREBASE
-───────────────────────────────────────────── */
+/* ── Leer y publicar ── */
 function doLoad(){
   if(!pendingFile) return;
-  const btn = document.getElementById('btnok');
-  btn.disabled = true;
-  btn.textContent = '⏳ Leyendo archivo...';
-
-  const r = new FileReader();
-  r.onload = e => {
-    try {
-      const wb = XLSX.read(e.target.result, {type:'array'});
-      let data = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
-
-      // Normalizar fechas y campos
-      data.forEach(row => {
-        const fv = row['Fecha Vencimiento Final (Más Antigua)'];
-        if(typeof fv === 'number'){
-          // ── Corrección zona horaria ──────────────────────────────────────
-          // Excel almacena días desde 1900-01-00. Convertimos a ms UTC,
-          // luego extraemos año/mes/día en UTC puro para evitar que
-          // UTC-5 (Ecuador) retroceda la fecha 1 día.
-          const totalMs = Math.round((fv - 25569) * 86400 * 1000);
-          const utc = new Date(totalMs);
-          const dd  = String(utc.getUTCDate()).padStart(2,'0');
-          const mm  = String(utc.getUTCMonth()+1).padStart(2,'0');
-          const yy  = utc.getUTCFullYear();
-          row['Fecha Vencimiento Final (Más Antigua)'] = `${dd}/${mm}/${yy}`;
+  const btn=document.getElementById('btnok');
+  btn.disabled=true; btn.textContent='⏳ Leyendo archivo...';
+  const r=new FileReader();
+  r.onload=e=>{
+    try{
+      const wb=XLSX.read(e.target.result,{type:'array'});
+      let data=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+      data.forEach(row=>{
+        const fv=row['Fecha Vencimiento Final (Más Antigua)'];
+        if(typeof fv==='number'){
+          const totalMs=Math.round((fv-25569)*86400*1000);
+          const utc=new Date(totalMs);
+          const dd=String(utc.getUTCDate()).padStart(2,'0');
+          const mm=String(utc.getUTCMonth()+1).padStart(2,'0');
+          const yy=utc.getUTCFullYear();
+          row['Fecha Vencimiento Final (Más Antigua)']=`${dd}/${mm}/${yy}`;
         }
-        if(!row['Dirección Principal'])  row['Dirección Principal'] = '';
-        if(!row['Zona Cliente Final'])   row['Zona Cliente Final']  = '';
+        if(!row['Dirección Principal'])  row['Dirección Principal']='';
+        if(!row['Zona Cliente Final'])   row['Zona Cliente Final']='';
       });
-
-      CK = detectCK(data[0]||{});
-
-      // Guardar en memoria y localStorage como respaldo
-      ALL = data;
-      localStorage.setItem(LS_KEY, JSON.stringify({data:ALL, ts:Date.now(), ck:CK}));
-
-      // ══ SUBIR A FIREBASE ══
-      publicarEnFirebase(ALL, pendingFile.name);
-
-    } catch(err){
+      CK=detectCK(data[0]||{});
+      ALL=data;
+      localStorage.setItem(LS_KEY,JSON.stringify({data:ALL,ts:Date.now(),ck:CK}));
+      publicarEnFirebase(ALL,pendingFile.name);
+    }catch(err){
       toast('Error al leer archivo','err');
       console.error(err);
-      btn.disabled = false;
-      btn.innerHTML = '🔥 Publicar en Firebase';
+      btn.disabled=false;
+      btn.innerHTML='🔥 Publicar en Firebase';
     }
   };
   r.readAsArrayBuffer(pendingFile);
 }
 
-/* ─────────────────────────────────────────────
-   PUBLICAR EN FIREBASE (con barra de progreso)
-───────────────────────────────────────────── */
-async function publicarEnFirebase(clientes, fileName){
-  const btn = document.getElementById('btnok');
-  btn.textContent = '🔥 Subiendo a Firebase...';
-
-  // Mostrar barra de progreso
-  const progWrap = document.getElementById('progWrap');
-  const progFill = document.getElementById('progFill');
-  const progPct  = document.getElementById('progPct');
+/* ── Publicar en Firebase ── */
+async function publicarEnFirebase(clientes,fileName){
+  const btn=document.getElementById('btnok');
+  btn.textContent='🔥 Subiendo a Firebase...';
+  const progWrap=document.getElementById('progWrap');
+  const progFill=document.getElementById('progFill');
+  const progPct=document.getElementById('progPct');
   progWrap.classList.add('on');
-  progFill.style.width = '0%';
-  progPct.textContent  = '0%';
-
-  setFbStatus('loading', 'Subiendo...');
-
-  try {
-    /* Firebase Realtime Database no soporta arrays nativos de forma eficiente.
-       Convertimos a objeto indexado por posición para evitar problemas con reordenamiento. */
-    const clientesObj = {};
-    clientes.forEach((c,i) => { clientesObj[`c${i}`] = c; });
-
-    const cobs  = getCobs();
-    const total = clientes.length;
-
-    // Actualizar progreso simulado mientras sube
-    let progress = 0;
-    const progInterval = setInterval(()=>{
-      progress = Math.min(progress+2, 88);
-      progFill.style.width = progress+'%';
-      progPct.textContent  = progress+'%';
-    }, 80);
-
-    // Metadatos
-    const meta = {
-      ts:           Date.now(),
-      fileName:     fileName||'listado.xlsx',
-      totalClientes: total,
-      totalCobradores: cobs.length,
-      cobradores:   cobs,
-      ck:           CK,
-      version:      Date.now()
+  progFill.style.width='0%'; progPct.textContent='0%';
+  setFbStatus('loading','Subiendo...');
+  try{
+    const clientesObj={};
+    clientes.forEach((c,i)=>{ clientesObj[`c${i}`]=c; });
+    const cobs=getCobs();
+    let progress=0;
+    const progInterval=setInterval(()=>{
+      progress=Math.min(progress+2,88);
+      progFill.style.width=progress+'%';
+      progPct.textContent=progress+'%';
+    },80);
+    const meta={
+      ts:Date.now(),
+      fileName:fileName||'listado.xlsx',
+      totalClientes:clientes.length,
+      totalCobradores:cobs.length,
+      cobradores:cobs,
+      ck:CK,
+      version:Date.now()
     };
-
-    // Escritura atómica: datos + meta en una sola operación
-    await db.ref('/').update({
-      cartera:      clientesObj,
-      cartera_meta: meta
-    });
-
+    await db.ref('/').update({cartera:clientesObj,cartera_meta:meta});
     clearInterval(progInterval);
-    progFill.style.width = '100%';
-    progPct.textContent  = '100%';
-
-    setTimeout(()=>{ progWrap.classList.remove('on'); }, 1800);
-
-    // Actualizar UI
+    progFill.style.width='100%'; progPct.textContent='100%';
+    setTimeout(()=>{ progWrap.classList.remove('on'); },1800);
     afterLoad();
     closeM();
-    setFbStatus('ok', 'Firebase ●');
-    toast(`🔥 ${total} registros subidos a Firebase · ${cobs.length} cobradores`,'fire');
-
-  } catch(err){
-    console.error('Firebase error:', err);
-    setFbStatus('err', 'Error Firebase');
-    toast('Error al publicar en Firebase: '+err.message,'err');
+    setFbStatus('ok','Firebase ●');
+    toast(`🔥 ${clientes.length} registros subidos · ${cobs.length} cobradores`,'fire');
+  }catch(err){
+    console.error('Firebase error:',err);
+    setFbStatus('err','Error Firebase');
+    toast('Error al publicar: '+err.message,'err');
     document.getElementById('progWrap').classList.remove('on');
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = '🔥 Publicar en Firebase';
+  }finally{
+    btn.disabled=false;
+    btn.innerHTML='🔥 Publicar en Firebase';
   }
 }
 
-/* ─────────────────────────────────────────────
-   DESPUÉS DE CARGAR DATOS
-───────────────────────────────────────────── */
+/* ── After load ── */
 function afterLoad(){
-  const now = new Date();
-  const dc = document.getElementById('dchip');
-  dc.textContent = `${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-  dc.style.display = 'inline-block';
-
-  document.getElementById('emp').style.display        = 'none';
-  document.getElementById('pg').style.display         = 'block';
-  document.getElementById('tabsbar').style.display    = 'flex';
-  document.getElementById('bexp').disabled            = false;
-
-  const cobs = getCobs();
-  const banner = document.getElementById('syncbanner');
-  banner.className = 'sync firebase on';
-  document.getElementById('syncico').textContent = '🔥';
-  document.getElementById('synctxt').textContent = `Firebase · ${ALL.length} registros · ${cobs.length} cobradores`;
-  document.getElementById('syncsub').innerHTML   = ` Actualizado ${now.toLocaleTimeString('es-EC')} · Los cobradores ven los datos en tiempo real`;
-
-  updKPIs();
-  buildFilters();
-  applyF();
+  const now=new Date();
+  const dc=document.getElementById('dchip');
+  dc.textContent=`${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  dc.style.display='inline-block';
+  document.getElementById('emp').style.display='none';
+  document.getElementById('pg').style.display='block';
+  document.getElementById('tabsbar').style.display='flex';
+  document.getElementById('bexp').disabled=false;
+  const cobs=getCobs();
+  const banner=document.getElementById('syncbanner');
+  banner.className='sync firebase on';
+  document.getElementById('syncico').textContent='🔥';
+  document.getElementById('synctxt').textContent=`Firebase · ${ALL.length} registros · ${cobs.length} cobradores`;
+  document.getElementById('syncsub').innerHTML=` Actualizado ${now.toLocaleTimeString('es-EC')} · Los cobradores ven los datos en tiempo real`;
+  updKPIs(); buildFilters(); applyF();
 }
 
-/* ─────────────────────────────────────────────
-   HELPERS
-───────────────────────────────────────────── */
+/* ── Helpers ── */
 function setTab(t){
   ['g','c'].forEach(x=>{
-    document.getElementById(`t${x}`).classList.toggle('active', x===t);
-    document.getElementById(`p${x}`).style.display = x===t?'block':'none';
+    document.getElementById(`t${x}`).classList.toggle('active',x===t);
+    document.getElementById(`p${x}`).style.display=x===t?'block':'none';
   });
   if(t==='c') buildCobs();
 }
 
 function detectCK(row){
-  // Acepta: DIA CAIDA, CAIDAS DIA, DIA CAÍDA, CAÍDA DIA y variantes con tildes/espacios
-  const normalize = s => s
-    .replace(/[ÍÁÉÓÚíáéóú]/g, c=>({'Í':'I','í':'i','Á':'A','á':'a','É':'E','é':'e','Ó':'O','ó':'o','Ú':'U','ú':'u'}[c]||c))
-    .toUpperCase().replace(/\s+/g,' ').trim();
-  const VALID = ['CAIDAS DIA','DIA CAIDA','CAIDA DIA','DIA CAIDAS'];
-  const k = Object.keys(row);
-  const f = k.find(k => VALID.includes(normalize(k)));
-  return f || 'DIA CAIDA';
+  const norm=s=>s.replace(/[ÍÁÉÓÚíáéóú]/g,c=>({'Í':'I','í':'i','Á':'A','á':'a','É':'E','é':'e','Ó':'O','ó':'o','Ú':'U','ú':'u'}[c]||c)).toUpperCase().replace(/\s+/g,' ').trim();
+  const VALID=['CAIDAS DIA','DIA CAIDA','CAIDA DIA','DIA CAIDAS'];
+  const k=Object.keys(row);
+  return k.find(k=>VALID.includes(norm(k)))||'DIA CAIDA';
 }
+function getCobs(){ return [...new Set(ALL.map(d=>d['Nombre Cobrador Actual']))].filter(Boolean).sort(); }
+function fmt(v){ return(parseFloat(v)||0).toLocaleString('es',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function fmtS(v){const n=parseFloat(v)||0;if(n>=1e6)return'$'+(n/1e6).toFixed(1)+'M';if(n>=1000)return'$'+(n/1000).toFixed(1)+'K';return'$'+fmt(n);}
+function calB(c){if(!c)return'—';return`<span class="bdg b${String(c).trim()}">${String(c).trim()}</span>`;}
+function catC(c){return c==='Mejora'?'cm':c==='Empeora'?'ce':'cs';}
 
-function getCobs(){
-  return [...new Set(ALL.map(d=>d['Nombre Cobrador Actual']))].filter(Boolean).sort();
-}
-function fmt(v){
-  return (parseFloat(v)||0).toLocaleString('es',{minimumFractionDigits:2,maximumFractionDigits:2});
-}
-function fmtS(v){
-  const n = parseFloat(v)||0;
-  if(n>=1e6) return '$'+(n/1e6).toFixed(1)+'M';
-  if(n>=1000) return '$'+(n/1000).toFixed(1)+'K';
-  return '$'+fmt(n);
-}
-function calB(c){
-  if(!c) return '—';
-  return `<span class="bdg b${c}">${c}</span>`;
-}
-function catC(c){
-  return c==='Mejora'?'cm':c==='Empeora'?'ce':'cs';
-}
-
-/* ─────────────────────────────────────────────
-   KPIs
-───────────────────────────────────────────── */
+/* ── KPIs ── */
 function updKPIs(){
-  const n     = ALL.length;
-  const cobs  = getCobs();
-  const cxc   = ALL.reduce((s,d)=>s+(parseFloat(d['CXC TOTAL'])||0),0);
-  const saldo = ALL.reduce((s,d)=>s+(parseFloat(d['SALDO CUOTA'])||0),0);
-  const caidas= ALL.filter(d=>(parseInt(d[CK],10)||0)>0).length;
-  document.getElementById('kt').textContent  = n.toLocaleString('es');
-  document.getElementById('ks').textContent  = `${cobs.length} cobradores activos`;
-  document.getElementById('kc').textContent  = fmtS(cxc);
-  document.getElementById('kn').textContent  = cobs.length;
-  document.getElementById('ksp').textContent = '$'+fmt(n?saldo/n:0);
-  document.getElementById('kca').textContent = caidas.toLocaleString('es');
+  const n=ALL.length, cobs=getCobs();
+  const cxc=ALL.reduce((s,d)=>s+(parseFloat(d['CXC TOTAL'])||0),0);
+  const saldo=ALL.reduce((s,d)=>s+(parseFloat(d['SALDO CUOTA'])||0),0);
+  const caidas=ALL.filter(d=>(parseInt(d[CK],10)||0)>0).length;
+  document.getElementById('kt').textContent=n.toLocaleString('es');
+  document.getElementById('ks').textContent=`${cobs.length} cobradores activos`;
+  document.getElementById('kc').textContent=fmtS(cxc);
+  document.getElementById('kn').textContent=cobs.length;
+  document.getElementById('ksp').textContent='$'+fmt(n?saldo/n:0);
+  document.getElementById('kca').textContent=caidas.toLocaleString('es');
 }
 
-/* ─────────────────────────────────────────────
-   FILTROS
-───────────────────────────────────────────── */
+/* ════════════════════════════════════════
+   FILTROS — con trim() igual que el cobrador
+════════════════════════════════════════ */
 function buildFilters(){
-  const sc = document.getElementById('fc');
-  sc.innerHTML = '<option value="">— Todos —</option>';
-  getCobs().forEach(c=>{ const o=document.createElement('option');o.value=c;o.textContent=c;sc.appendChild(o); });
+  /* Cobrador */
+  const sc=document.getElementById('fc');
+  sc.innerHTML='<option value="">— Todos —</option>';
+  getCobs().forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;sc.appendChild(o);});
 
-  const sq = document.getElementById('fq');
-  sq.innerHTML = '<option value="">— Todas —</option>';
-  [...new Set(ALL.map(d=>d['Calificación Cliente Mensual']))].filter(Boolean).sort().forEach(v=>{
-    const o=document.createElement('option');o.value=v;o.textContent=v;sq.appendChild(o);
-  });
+  /* Calificación — trim() en valores */
+  const sq=document.getElementById('fq');
+  sq.innerHTML='<option value="">— Todas —</option>';
+  [...new Set(ALL.map(d=>String(d['Calificación Cliente Mensual']||'').trim()))].filter(Boolean).sort()
+    .forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;sq.appendChild(o);});
 
-  const scat = document.getElementById('fcat');
-  scat.innerHTML = '<option value="">— Todas —</option>';
-  [...new Set(ALL.map(d=>d['Categoría del Cliente']))].filter(Boolean).sort().forEach(v=>{
-    const o=document.createElement('option');o.value=v;o.textContent=v;scat.appendChild(o);
-  });
+  /* Categoría — trim() en valores */
+  const scat=document.getElementById('fcat');
+  scat.innerHTML='<option value="">— Todas —</option>';
+  [...new Set(ALL.map(d=>String(d['Categoría del Cliente']||'').trim()))].filter(Boolean).sort()
+    .forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;scat.appendChild(o);});
+
+  /* Actualizar th caídas */
+  const th=document.getElementById('thCaida');
+  th.textContent=CK+' ↕'; th.onclick=()=>srt(CK);
 
   buildCaidasButtons();
 }
 
-function getCaidasLevel(v){
-  if(v===0) return '0';
-  if(v===1) return '1';
-  if(v===2) return '2';
-  return 'high';
-}
+function getCaidasLevel(v){if(v===0)return'0';if(v===1)return'1';if(v===2)return'2';return'high';}
 
 function buildCaidasButtons(){
   activeCaidas.clear();
-  // Contar clientes por cada valor de caída
-  const conteo = {};
+  const conteo={};
   ALL.forEach(d=>{
-    const v = d[CK];
-    if(v==null||v==='') return;
-    const n = parseInt(v,10);
-    if(isNaN(n)) return;
-    conteo[n] = (conteo[n]||0)+1;
+    const v=d[CK]; if(v==null||v==='')return;
+    const n=parseInt(v,10); if(isNaN(n))return;
+    conteo[n]=(conteo[n]||0)+1;
   });
-  const vals = Object.keys(conteo).map(Number).sort((a,b)=>a-b);
-  const maxCnt = Math.max(...Object.values(conteo),1);
-
-  const cw = document.getElementById('cwrap');
-  cw.innerHTML = '';
-
+  const vals=Object.keys(conteo).map(Number).sort((a,b)=>a-b);
+  const maxCnt=Math.max(...Object.values(conteo),1);
+  const cw=document.getElementById('cwrap'); cw.innerHTML='';
   vals.forEach(v=>{
-    const cnt = conteo[v];
-    const level = getCaidasLevel(v);
-    const b = document.createElement('button');
-    b.className = 'btn-c';
-    b.setAttribute('data-level', level);
-    b.innerHTML = `<span class="bc-num">${v}</span><span class="bc-cnt">${cnt} cli.</span>`;
-    b.title = `Caídas: ${v} — ${cnt} cliente${cnt!==1?'s':''}`;
-    b.onclick = ()=>{
-      if(activeCaidas.has(v)){ activeCaidas.delete(v); b.classList.remove('on'); }
-      else { activeCaidas.add(v); b.classList.add('on'); }
-      document.getElementById('btnClearCaidas').style.display = activeCaidas.size>0?'inline-flex':'none';
+    const cnt=conteo[v], level=getCaidasLevel(v);
+    const b=document.createElement('button');
+    b.className='btn-c'; b.setAttribute('data-level',level);
+    b.innerHTML=`<span class="bc-num">${v}</span><span class="bc-cnt">${cnt} cli.</span>`;
+    b.title=`Caídas: ${v} — ${cnt} cliente${cnt!==1?'s':''}`;
+    b.onclick=()=>{
+      activeCaidas.has(v)?(activeCaidas.delete(v),b.classList.remove('on')):(activeCaidas.add(v),b.classList.add('on'));
+      document.getElementById('btnClearCaidas').style.display=activeCaidas.size>0?'inline-flex':'none';
       applyF();
     };
     cw.appendChild(b);
   });
-
-  // Barra visual de distribución
-  const bar = document.getElementById('caidasBar');
-  const inner = document.getElementById('caidasBarInner');
-  const labels = document.getElementById('caidasBarLabels');
-  if(!vals.length){ bar.style.display='none'; return; }
+  const bar=document.getElementById('caidasBar');
+  const inner=document.getElementById('caidasBarInner');
+  const labels=document.getElementById('caidasBarLabels');
+  if(!vals.length){bar.style.display='none';return;}
   bar.style.display='block';
-
   const colorMap={'0':'#00ff88','1':'#ffb800','2':'#ff6b35','high':'#ff3d5a'};
-  inner.innerHTML = vals.map(v=>{
-    const pct = Math.max(4, Math.round(conteo[v]/maxCnt*100));
-    const col = colorMap[getCaidasLevel(v)];
+  inner.innerHTML=vals.map(v=>{
+    const pct=Math.max(4,Math.round(conteo[v]/maxCnt*100));
+    const col=colorMap[getCaidasLevel(v)];
     return `<div style="flex:1;background:${col};opacity:.75;border-radius:3px 3px 0 0;height:${pct}%;min-width:18px;transition:height .4s ease;" title="${v} caídas: ${conteo[v]} clientes"></div>`;
   }).join('');
-  labels.innerHTML = vals.map(v=>{
-    const col = colorMap[getCaidasLevel(v)];
+  labels.innerHTML=vals.map(v=>{
+    const col=colorMap[getCaidasLevel(v)];
     return `<div style="flex:1;text-align:center;font-family:'Space Mono',monospace;font-size:.52rem;color:${col};min-width:18px;">${v}</div>`;
   }).join('');
 }
@@ -784,22 +629,25 @@ function clearCaidas(){
   applyF();
 }
 
+/* ════════════════════════════════════════
+   APPLY FILTERS — trim() en comparaciones
+════════════════════════════════════════ */
 function applyF(){
-  const s   = document.getElementById('fs').value.toLowerCase();
-  const cb  = document.getElementById('fc').value;
-  const cal = document.getElementById('fq').value;
-  const cat = document.getElementById('fcat').value;
-  FD = ALL.filter(d=>{
-    if(s&&!String(d['Nombre Cliente']||'').toLowerCase().includes(s)&&!String(d['Nro Identificación']||'').includes(s)) return false;
-    if(cb&&d['Nombre Cobrador Actual']!==cb) return false;
-    if(cal&&d['Calificación Cliente Mensual']!==cal) return false;
-    if(cat&&d['Categoría del Cliente']!==cat) return false;
-    if(activeCaidas.size>0&&!activeCaidas.has(parseInt(d[CK],10))) return false;
+  const s=document.getElementById('fs').value.toLowerCase().trim();
+  const cb=document.getElementById('fc').value;
+  const cal=document.getElementById('fq').value;
+  const cat=document.getElementById('fcat').value;
+  FD=ALL.filter(d=>{
+    if(s&&!String(d['Nombre Cliente']||'').toLowerCase().includes(s)&&!String(d['Nro Identificación']||'').includes(s))return false;
+    if(cb&&String(d['Nombre Cobrador Actual']||'').trim()!==cb)return false;
+    if(cal&&String(d['Calificación Cliente Mensual']||'').trim()!==cal)return false;
+    if(cat&&String(d['Categoría del Cliente']||'').trim()!==cat)return false;
+    if(activeCaidas.size>0&&!activeCaidas.has(parseInt(d[CK],10)))return false;
     return true;
   });
-  if(sF) doSort();
+  if(sF)doSort();
   pCur=1; renderT(); renderT10();
-  document.getElementById('rcnt').textContent = FD.length+' registros';
+  document.getElementById('rcnt').textContent=FD.length+' registros';
 }
 
 function clearF(){
@@ -810,28 +658,24 @@ function clearF(){
   clearCaidas();
 }
 
-/* ─────────────────────────────────────────────
-   SORT
-───────────────────────────────────────────── */
-function srt(f){ if(sF===f)sA=!sA;else{sF=f;sA=true;} doSort();pCur=1;renderT(); }
+/* ── Sort ── */
+function srt(f){if(sF===f)sA=!sA;else{sF=f;sA=true;}doSort();pCur=1;renderT();}
 function doSort(){
   FD.sort((a,b)=>{
     let va=a[sF],vb=b[sF];
-    if(typeof va==='number') return sA?va-vb:vb-va;
+    if(typeof va==='number')return sA?va-vb:vb-va;
     return sA?String(va||'').localeCompare(String(vb||'')):String(vb||'').localeCompare(String(va||''));
   });
 }
 
-/* ─────────────────────────────────────────────
-   TABLA
-───────────────────────────────────────────── */
+/* ── Tabla ── */
 function renderT(){
-  const tb=document.getElementById('tbody'), nr=document.getElementById('nores');
-  const tot=FD.length, tp=Math.max(1,Math.ceil(tot/PS));
-  if(pCur>tp) pCur=tp;
-  if(!tot){ tb.innerHTML=''; nr.style.display='block'; renderPg(0,1); return; }
+  const tb=document.getElementById('tbody'),nr=document.getElementById('nores');
+  const tot=FD.length,tp=Math.max(1,Math.ceil(tot/PS));
+  if(pCur>tp)pCur=tp;
+  if(!tot){tb.innerHTML='';nr.style.display='block';renderPg(0,1);return;}
   nr.style.display='none';
-  tb.innerHTML = FD.slice((pCur-1)*PS, pCur*PS).map(d=>`<tr>
+  tb.innerHTML=FD.slice((pCur-1)*PS,pCur*PS).map(d=>`<tr>
     <td style="font-size:.68rem;color:var(--muted2)">${d['Nro Identificación']||''}</td>
     <td style="font-weight:600" title="${d['Nombre Cliente']||''}">${d['Nombre Cliente']||''}</td>
     <td style="color:var(--accent);font-size:.72rem">${(d['Nombre Cobrador Actual']||'').split(' ').slice(0,3).join(' ')}</td>
@@ -842,15 +686,15 @@ function renderT(){
     <td><span class="pc">${d[CK]!=null&&d[CK]!==''?d[CK]:'—'}</span></td>
     <td style="color:var(--accent)">$${fmt(d['SALDO CUOTA']||0)}</td>
     <td style="color:#a78bfa;font-weight:600">$${fmt(d['CXC TOTAL']||0)}</td>
-    <td class="${catC(d['Categoría del Cliente'])}">${d['Categoría del Cliente']||''}</td>
+    <td class="${catC(d['Categoría del Cliente'])}">${String(d['Categoría del Cliente']||'').trim()}</td>
   </tr>`).join('');
   renderPg(tot,tp);
 }
 
 function renderPg(tot,tp){
-  const s=(pCur-1)*PS+1, e=Math.min(pCur*PS,tot);
-  document.getElementById('pgi').textContent = tot?`${s}–${e} de ${tot}`:'0';
-  let h=''; const r=2;
+  const s=(pCur-1)*PS+1,e=Math.min(pCur*PS,tot);
+  document.getElementById('pgi').textContent=tot?`${s}–${e} de ${tot}`:'0';
+  let h='';const r=2;
   for(let i=1;i<=tp;i++){
     if(i===1||i===tp||(i>=pCur-r&&i<=pCur+r))
       h+=`<button onclick="goP(${i})"${i===pCur?' class="active"':''}>${i}</button>`;
@@ -861,20 +705,18 @@ function renderPg(tot,tp){
   document.getElementById('pprev').disabled=pCur===1;
   document.getElementById('pnext').disabled=pCur===tp;
 }
-function goP(p){ pCur=p; renderT(); }
-function goPg(d){ goP(pCur+d); }
+function goP(p){pCur=p;renderT();}
+function goPg(d){goP(pCur+d);}
 
-/* ─────────────────────────────────────────────
-   TOP 10
-───────────────────────────────────────────── */
+/* ── Top 10 ── */
 function renderT10(){
-  const sorted = [...FD].filter(d=>(parseFloat(d['CXC TOTAL'])||0)>0)
+  const sorted=[...FD].filter(d=>(parseFloat(d['CXC TOTAL'])||0)>0)
     .sort((a,b)=>(parseFloat(b['CXC TOTAL'])||0)-(parseFloat(a['CXC TOTAL'])||0)).slice(0,10);
-  document.getElementById('t10s').textContent = FD.length+' filtrados';
-  const el = document.getElementById('t10b');
-  if(!sorted.length){ el.innerHTML='<div class="nores" style="padding:18px">Sin datos</div>'; return; }
+  document.getElementById('t10s').textContent=FD.length+' filtrados';
+  const el=document.getElementById('t10b');
+  if(!sorted.length){el.innerHTML='<div class="nores" style="padding:18px">Sin datos</div>';return;}
   const rc=['#f59e0b','#94a3b8','#cd7f32'];
-  el.innerHTML = sorted.map((d,i)=>`
+  el.innerHTML=sorted.map((d,i)=>`
     <div style="display:flex;align-items:center;gap:10px;padding:8px 11px;margin-bottom:5px;background:var(--surface2);border-radius:10px;border:1px solid var(--border)"
       onmouseover="this.style.borderColor='var(--border2)'" onmouseout="this.style.borderColor='var(--border)'">
       <div style="min-width:20px;font-family:'Space Mono',monospace;font-size:.63rem;font-weight:700;color:${rc[i]||'var(--muted)'}">${i+1}</div>
@@ -886,22 +728,20 @@ function renderT10(){
     </div>`).join('');
 }
 
-/* ─────────────────────────────────────────────
-   CARDS COBRADORES
-───────────────────────────────────────────── */
+/* ── Cards Cobradores ── */
 function buildCobs(){
-  const grid=document.getElementById('cgrid'), cobs=getCobs();
-  if(!cobs.length){ grid.innerHTML='<div class="nores">Sin datos</div>'; return; }
-  const CL=['A','B','C','D','E','E1'], CC={'A':'#00ff88','B':'#00e5ff','C':'#ffb800','D':'#ff6b35','E':'#ff3d5a','E1':'#a78bfa'};
-  grid.innerHTML = cobs.map(cob=>{
-    const cl=ALL.filter(d=>d['Nombre Cobrador Actual']===cob), n=cl.length;
-    const cxc   = cl.reduce((s,d)=>s+(parseFloat(d['CXC TOTAL'])||0),0);
-    const saldo = cl.reduce((s,d)=>s+(parseFloat(d['SALDO CUOTA'])||0),0);
-    const nc    = cl.filter(d=>(parseInt(d[CK],10)||0)>0).length;
-    const ini   = cob.trim().split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase();
-    const dist  = CL.map(k=>({k,c:cl.filter(d=>d['Calificación Cliente Mensual']===k).length})).filter(x=>x.c>0);
-    const mx    = Math.max(...dist.map(x=>x.c),1);
-    const safe  = cob.replace(/'/g,"\\'");
+  const grid=document.getElementById('cgrid'),cobs=getCobs();
+  if(!cobs.length){grid.innerHTML='<div class="nores">Sin datos</div>';return;}
+  const CL=['A','B','C','D','E','E1'],CC={'A':'#00ff88','B':'#00e5ff','C':'#ffb800','D':'#ff6b35','E':'#ff3d5a','E1':'#a78bfa'};
+  grid.innerHTML=cobs.map(cob=>{
+    const cl=ALL.filter(d=>d['Nombre Cobrador Actual']===cob),n=cl.length;
+    const cxc=cl.reduce((s,d)=>s+(parseFloat(d['CXC TOTAL'])||0),0);
+    const saldo=cl.reduce((s,d)=>s+(parseFloat(d['SALDO CUOTA'])||0),0);
+    const nc=cl.filter(d=>(parseInt(d[CK],10)||0)>0).length;
+    const ini=cob.trim().split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase();
+    const dist=CL.map(k=>({k,c:cl.filter(d=>String(d['Calificación Cliente Mensual']||'').trim()===k).length})).filter(x=>x.c>0);
+    const mx=Math.max(...dist.map(x=>x.c),1);
+    const safe=cob.replace(/'/g,"\\'");
     return `<div class="ccard">
       <div class="ctop">
         <div class="cav">${ini}</div>
@@ -924,60 +764,53 @@ function buildCobs(){
   }).join('');
 }
 
-/* ─────────────────────────────────────────────
-   EXPORTAR
-───────────────────────────────────────────── */
+/* ── Exportar ── */
 function expCob(nombre){
-  const d = ALL.filter(x=>x['Nombre Cobrador Actual']===nombre);
-  if(!d.length){ toast('Sin datos','err'); return; }
-  const wb=XLSX.utils.book_new(), ws=XLSX.utils.json_to_sheet(d);
-  ws['!cols'] = Object.keys(d[0]).map(k=>({wch:Math.max(k.length,12)}));
+  const d=ALL.filter(x=>x['Nombre Cobrador Actual']===nombre);
+  if(!d.length){toast('Sin datos','err');return;}
+  const wb=XLSX.utils.book_new(),ws=XLSX.utils.json_to_sheet(d);
+  ws['!cols']=Object.keys(d[0]).map(k=>({wch:Math.max(k.length,12)}));
   XLSX.utils.book_append_sheet(wb,ws,'Clientes');
-  const now=new Date(), ts=`${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`;
+  const now=new Date(),ts=`${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`;
   const safe=nombre.replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s]/g,'').trim().replace(/\s+/g,'_').substring(0,30);
   XLSX.writeFile(wb,`${safe}_${ts}.xlsx`);
   toast(`Exportado: ${nombre.split(' ').slice(0,2).join(' ')} · ${d.length}`,'ok');
 }
 
 function expAll(){
-  if(!ALL.length){ toast('Sin datos','err'); return; }
-  const wb=XLSX.utils.book_new(), ws=XLSX.utils.json_to_sheet(ALL);
-  ws['!cols'] = Object.keys(ALL[0]).map(k=>({wch:Math.max(k.length,12)}));
+  if(!ALL.length){toast('Sin datos','err');return;}
+  const wb=XLSX.utils.book_new(),ws=XLSX.utils.json_to_sheet(ALL);
+  ws['!cols']=Object.keys(ALL[0]).map(k=>({wch:Math.max(k.length,12)}));
   XLSX.utils.book_append_sheet(wb,ws,'Cartera Completa');
   getCobs().forEach(c=>{
     const d=ALL.filter(x=>x['Nombre Cobrador Actual']===c);
-    const w=XLSX.utils.json_to_sheet(d); w['!cols']=ws['!cols'];
+    const w=XLSX.utils.json_to_sheet(d);w['!cols']=ws['!cols'];
     XLSX.utils.book_append_sheet(wb,w,c.replace(/[^\w\sáéíóúÁÉÍÓÚñÑ]/g,'').substring(0,28));
   });
-  const now=new Date(), ts=`${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`;
+  const now=new Date(),ts=`${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`;
   XLSX.writeFile(wb,`supervisor_completo_${ts}.xlsx`);
   toast(`Exportado · ${ALL.length} registros · ${getCobs().length} hojas`,'ok');
 }
 
-/* ─────────────────────────────────────────────
-   INIT: cargar desde localStorage al abrir
-   (como respaldo mientras Firebase carga)
-───────────────────────────────────────────── */
+/* ── Init: cargar desde localStorage (respaldo offline) ── */
 (function init(){
-  try {
-    const raw = localStorage.getItem(LS_KEY);
-    if(!raw) return;
-    const p = JSON.parse(raw);
-    if(!p?.data?.length) return;
-    ALL = p.data; CK = p.ck||'DIA CAIDA';
-    const ts = p.ts ? new Date(p.ts) : new Date();
-    const dc = document.getElementById('dchip');
-    dc.textContent = `${String(ts.getDate()).padStart(2,'0')}/${String(ts.getMonth()+1).padStart(2,'0')}/${ts.getFullYear()} ${String(ts.getHours()).padStart(2,'0')}:${String(ts.getMinutes()).padStart(2,'0')}`;
-    dc.style.display = 'inline-block';
-
-    const banner = document.getElementById('syncbanner');
-    banner.className = 'sync local on';
-    document.getElementById('syncico').textContent = '💾';
-    document.getElementById('synctxt').textContent = `Caché local · ${ALL.length} registros · ${getCobs().length} cobradores`;
-    document.getElementById('syncsub').innerHTML   = ` Sesión anterior · Sube un archivo nuevo para actualizar Firebase`;
-
+  try{
+    const raw=localStorage.getItem(LS_KEY);
+    if(!raw)return;
+    const p=JSON.parse(raw);
+    if(!p?.data?.length)return;
+    ALL=p.data; CK=p.ck||'DIA CAIDA';
+    const ts=p.ts?new Date(p.ts):new Date();
+    const dc=document.getElementById('dchip');
+    dc.textContent=`${String(ts.getDate()).padStart(2,'0')}/${String(ts.getMonth()+1).padStart(2,'0')}/${ts.getFullYear()} ${String(ts.getHours()).padStart(2,'0')}:${String(ts.getMinutes()).padStart(2,'0')}`;
+    dc.style.display='inline-block';
+    const banner=document.getElementById('syncbanner');
+    banner.className='sync local on';
+    document.getElementById('syncico').textContent='💾';
+    document.getElementById('synctxt').textContent=`Caché local · ${ALL.length} registros · ${getCobs().length} cobradores`;
+    document.getElementById('syncsub').innerHTML=` Sesión anterior · Sube un archivo nuevo para actualizar Firebase`;
     afterLoad();
-  } catch(e){ console.warn('init error:', e); }
+  }catch(e){console.warn('init error:',e);}
 })();
 </script>
 </body>
